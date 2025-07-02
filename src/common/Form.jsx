@@ -1,8 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { SelectContent, SelectItem, SelectValue } from "@radix-ui/react-select";
+// import { SelectContent, SelectItem, SelectValue } from "@radix-ui/react-select";
 import React from "react";
 
 const types = {
@@ -52,6 +58,7 @@ const CommonForm = ({
                 [getControlItem.name]: value,
               })
             }
+            value={value}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder={getControlItem.placeholder} />
@@ -60,7 +67,9 @@ const CommonForm = ({
             <SelectContent>
               {getControlItem.options && getControlItem.options.length > 0
                 ? getControlItem.options.map((optionItem) => (
-                    <SelectItem>{optionItem.label}</SelectItem>
+                    <SelectItem key={optionItem.id} value={optionItem.id}>
+                      {optionItem.label}
+                    </SelectItem>
                   ))
                 : null}
             </SelectContent>
@@ -75,6 +84,12 @@ const CommonForm = ({
             placeholder={getControlItem.placeholder}
             id={getControlItem.id}
             value={value}
+            onChange={(event) =>
+              setFormData({
+                ...formData,
+                [getControlItem.name]: event.target.value,
+              })
+            }
           />
         );
 
@@ -84,7 +99,7 @@ const CommonForm = ({
           <Input
             name={getControlItem.name}
             placeholder={getControlItem.placeholder}
-            id={getControlItem.id}
+            id={getControlItem.name}
             value={value}
             type={getControlItem.type}
             onChange={(event) =>
@@ -112,7 +127,9 @@ const CommonForm = ({
         ))}
       </div>
 
-      <Button className="mt-3">{buttonText || "submit"}</Button>
+      <Button type="submit" className="mt-3">
+        {buttonText || "submit"}
+      </Button>
     </form>
   );
 };

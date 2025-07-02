@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { APP_URL } from "./constants";
+import { toast } from "sonner";
 
 const initialState = {
   user: null,
@@ -67,6 +68,26 @@ export const fetchUserProfile = createAsyncThunk(
   }
 );
 
+export const logoutUser = createAsyncThunk(
+  "auth/logout", // action type prefix
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${APP_URL}/users/logout`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || " Failed Logout user info"
+      );
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -102,6 +123,20 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload || "something went Wrong";
         state.user = null;
+      })
+      .addCase(logoutUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(logoutUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = null;
+        toast.success("Logged Out User Succesfuly");
+        state.isAuthenticated = false;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || "something went Wrong";
       })
 
       .addCase(fetchUserProfile.pending, (state) => {

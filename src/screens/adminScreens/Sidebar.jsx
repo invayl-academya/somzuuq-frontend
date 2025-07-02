@@ -4,7 +4,13 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { ChartColumnStacked, LayoutDashboard } from "lucide-react";
+import {
+  BadgeCent,
+  ChartColumnStacked,
+  LayoutDashboard,
+  ShoppingBasket,
+  Users,
+} from "lucide-react";
 import React, { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -19,13 +25,19 @@ export const adminSidebarMenu = [
     id: "Products",
     label: "Products",
     path: "/admin/products",
-    icon: <LayoutDashboard />,
+    icon: <ShoppingBasket />,
   },
   {
     id: "Orders",
     label: "Orders",
     path: "/admin/orders",
-    icon: <LayoutDashboard />,
+    icon: <BadgeCent />,
+  },
+  {
+    id: "Users",
+    label: "Users",
+    path: "/admin/usersList",
+    icon: <Users />,
   },
 ];
 
@@ -61,7 +73,7 @@ const AdminSidebar = ({ open, setOpen }) => {
             <SheetHeader className="border border-b">
               <SheetTitle className="flex items-center gap-4">
                 <ChartColumnStacked />
-                <b className="text-xl font-extrabold">Admin Sidebar</b>
+                <b className="text-xl font-extrabold ">Admin Sidebar</b>
               </SheetTitle>
             </SheetHeader>
 
@@ -69,7 +81,7 @@ const AdminSidebar = ({ open, setOpen }) => {
           </div>
         </SheetContent>
       </Sheet>{" "}
-      <asid className="hidden w-64 flex flex-col border-r bg-background p-6">
+      <aside className="hidden w-64 flex flex-col border-r bg-background p-6">
         <div
           className="flex items-center gap-2"
           onClick={() => navigate("/admin/dashoard")}
@@ -78,7 +90,7 @@ const AdminSidebar = ({ open, setOpen }) => {
           <p>Admin Controls</p>
         </div>
         <MenuItems />
-      </asid>
+      </aside>
     </Fragment>
   );
 };

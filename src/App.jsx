@@ -14,6 +14,7 @@ import { Toaster } from "./components/ui/sonner";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./screens/userScreens/Profile";
 import AdminOrders from "./screens/adminScreens/AdminOrders";
+import AdminUsersList from "./screens/adminScreens/AdminUsersList";
 
 function App() {
   return (
@@ -21,10 +22,18 @@ function App() {
       <Routes>
         <Route path="/" element={<HomeScreen />} />
 
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="products" element={<AdminProducts />} />
           <Route path="orders" element={<AdminOrders />} />
+          <Route path="usersList" element={<AdminUsersList />} />
         </Route>
 
         <Route path="/auth" element={<Layout />}>

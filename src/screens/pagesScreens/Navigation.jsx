@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { logoutUser } from "@/redux/authSlice";
 import { AvatarFallback } from "@radix-ui/react-avatar";
 import {
   AlignJustify,
@@ -18,7 +19,7 @@ import {
   UserCog,
 } from "lucide-react";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 export const shopingHeaderNav = [
@@ -71,6 +72,11 @@ export const MenuItems = () => {
 
 export const UserContent = () => {
   const { user } = useSelector((state) => state.auth);
+
+  const dispatch = useDispatch();
+  const logoutHandler = () => {
+    dispatch(logoutUser());
+  };
   return (
     <div className="flex items-center gap-6">
       <Button
@@ -103,7 +109,10 @@ export const UserContent = () => {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="flex items-center gap-4 ">
+          <DropdownMenuItem
+            onClick={logoutHandler}
+            className="flex items-center gap-4 "
+          >
             <LogOut className="" /> Logout
           </DropdownMenuItem>
         </DropdownMenuContent>

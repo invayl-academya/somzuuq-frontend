@@ -9,7 +9,12 @@ import {
 import CommonForm from "@/common/Form";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
-import { addProduct, getProducts } from "@/redux/productSlice";
+import {
+  addProduct,
+  deleteProduct,
+  getProducts,
+  updateProduct,
+} from "@/redux/productSlice";
 import { addProductFormElements } from "@/common";
 import ProductImageUpload from "./components/ProductImageUpload";
 import AdminProductCard from "./components/AdminProductCard";
@@ -34,30 +39,74 @@ const AdminProducts = () => {
 
   const dispatch = useDispatch();
 
-  const [formdata, setFomdata] = useState(initialData);
+  const [formdata, setFormdata] = useState(initialData);
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imageLoading, setImageLoading] = useState(false);
+  const [editMode, setEditMode] = useState(false);
 
   function onSubmit(e) {
     e.preventDefault();
 
-    dispatch(
-      addProduct({
-        ...formdata,
-        image: uploadedImageUrl,
-      })
-    ).then((res) => {
-      if (res.payload?.data) {
-        console.log("res", res);
-        setFomdata(initialData);
+    const payload = {
+      ...formdata,
+      image: uploadedImageUrl,
+    };
+
+    const action = editMode
+      ? updateProduct({ id: formdata._id, formdata: payload })
+      : addProduct(payload);
+
+    dispatch(action).then((result) => {
+      if (result.payload) {
         dispatch(getProducts());
-        setOpenCreateProductsDialog(false);
-        setImageFile(null);
-        toast.success(res.payload.message);
+        toast.success(result.payload.message || "Product Saved");
+        resetForm();
       }
     });
+
+    // dispatch(
+    //   addProduct({
+    //     ...formdata,
+    //     image: uploadedImageUrl,
+    //   })
+    // ).then((res) => {
+    //   if (res.payload?.data) {
+    //     console.log("res", res);
+    //     setFormdata(initialData);
+    //     dispatch(getProducts());
+    //     setOpenCreateProductsDialog(false);
+    //     setImageFile(null);
+    //     toast.success(res.payload.message);
+    //   }
+    // });
   }
+
+  function resetForm() {
+    setOpenCreateProductsDialog(false);
+    setEditMode(false);
+    setFormdata(initialData);
+    setUploadedImageUrl("");
+    setImageFile(null);
+  }
+
+  const editHandler = (product) => {
+    console.log("product", product);
+    setEditMode(true);
+    setFormdata(product);
+    setUploadedImageUrl(product.image);
+    setOpenCreateProductsDialog(true);
+  };
+
+  const deleteHandler = (productId) => {
+    // console.log("productDLT", product);
+    dispatch(deleteProduct(productId)).then((res) => {
+      if (res.payload) {
+        toast.success("product  deleted ....");
+        dispatch(getProducts());
+      }
+    });
+  };
 
   useEffect(() => {
     dispatch(getProducts());
@@ -69,6 +118,7 @@ const AdminProducts = () => {
         <div className="flex justify-end">
           <Button
             onClick={() => {
+              resetForm();
               setOpenCreateProductsDialog(true);
             }}
           >
@@ -79,9 +129,18 @@ const AdminProducts = () => {
         {/* Product grid below the button */}
         <div className="grid gap-2 md:grid-cols-3  lg:grid-cols-3">
           {products && products.length > 0 ? (
-            products.map((product) => <AdminProductCard product={product} />)
+            products?.map((product) => (
+              <AdminProductCard
+                key={product._id}
+                product={product}
+                editHandler={editHandler}
+                deleteHandler={deleteHandler}
+              />
+            ))
           ) : (
-            <div></div>
+            <div>
+              <h3>Products Not found</h3>
+            </div>
           )}
         </div>
       </div>
@@ -96,7 +155,9 @@ const AdminProducts = () => {
           {" "}
           <SheetHeader>
             <SheetHeader>
-              <SheetTitle className="text-3xl -mt-2">New Product</SheetTitle>
+              <SheetTitle className="text-3xl -mt-2">
+                {editMode ? "edit product" : "Create Product"}
+              </SheetTitle>
             </SheetHeader>
           </SheetHeader>
           <ProductImageUpload
@@ -111,7 +172,7 @@ const AdminProducts = () => {
             <CommonForm
               onSubmit={onSubmit}
               formData={formdata}
-              setFormData={setFomdata}
+              setFormData={setFormdata}
               buttonText={"submit"}
               formControls={addProductFormElements}
             />

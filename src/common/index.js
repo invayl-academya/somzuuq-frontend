@@ -113,3 +113,34 @@ export const addProductFormElements = [
     placeholder: "Enter total stock",
   },
 ];
+
+export const filterOptions = {
+  category: [
+    { id: "men", label: "Men" },
+    { id: "women", label: "Women" },
+    { id: "sportswear", label: "Sportswear" },
+    { id: "electronics", label: "Electronics" },
+    { id: "home", label: "Home & Living" },
+    { id: "kids", label: "Kids" },
+    { id: "accessories", label: "Accessories" },
+    { id: "footwear", label: "Footwear" },
+  ],
+  brand: [
+    { id: "nike", label: "Nike" },
+    { id: "adidas", label: "Adidas" },
+    { id: "puma", label: "Puma" },
+    { id: "zara", label: "Zara" },
+    { id: "h&m", label: "H&M" },
+    { id: "ymc", label: "invayl" },
+    { id: "uniqlo", label: "Uniqlo" },
+    { id: "underarmour", label: "Under Armour" },
+    { id: "gucci", label: "Gucci" },
+  ],
+};
+
+export const sortOptions = [
+  { id: "price-asc", label: "Price: Low to High" },
+  { id: "price-desc", label: "Price: High to Low" },
+  { id: "name-asc", label: "From: A to Z" },
+  { id: "name-desc", label: "From: Z to A" },
+];

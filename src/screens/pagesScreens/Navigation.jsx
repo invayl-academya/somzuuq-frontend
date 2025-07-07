@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const shopingHeaderNav = [
   {
@@ -56,10 +56,16 @@ export const shopingHeaderNav = [
 ];
 
 export const MenuItems = () => {
+  const navigate = useNavigate();
+
+  const handleNavigate = (item) => {
+    navigate(item.path);
+  };
   return (
     <div className="flex items-center  mb-3 lg:mb-0 lg:items-center gap-3">
       {shopingHeaderNav?.map((nav) => (
         <button
+          onClick={() => handleNavigate(nav)}
           className="text-md font-bold sm:text-gray-700 lg:text-slate-200 pointer"
           key={nav.id}
         >

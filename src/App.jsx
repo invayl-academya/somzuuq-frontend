@@ -7,7 +7,6 @@ import AdminLayout from "./screensLayout/adminLayout/adminLayout";
 import AdminDashboard from "./screens/adminScreens/Dashboard";
 import Register from "./screens/userScreens/Register";
 import AdminProducts from "./screens/adminScreens/AdminProducts";
-import Listing from "./screens/pagesScreens/Listing";
 import ShoppingLayout from "./screensLayout/pageslayout/ShoppingLayout";
 import ShoppingProducts from "./screens/pagesScreens/ShoppingProducts";
 import { Toaster } from "./components/ui/sonner";
@@ -15,6 +14,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./screens/userScreens/Profile";
 import AdminOrders from "./screens/adminScreens/AdminOrders";
 import AdminUsersList from "./screens/adminScreens/AdminUsersList";
+import ShopProducts from "./screens/pagesScreens/Listing";
+import NotFound from "./screens/adminScreens/components/Not-Found";
+import ProductDetails from "./screens/pagesScreens/ProductDetails";
 
 function App() {
   return (
@@ -49,9 +51,12 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route path="listing" element={<Listing />} />
+          <Route path="products" element={<ShopProducts />} />
+          <Route path="product/:id" element={<ProductDetails />} />
+
           <Route path="home" element={<ShoppingProducts />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
       <Toaster richColors position="top-right" />

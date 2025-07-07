@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import React from "react";
 
-const AdminProductCard = ({ product }) => {
+const AdminProductCard = ({ product, editHandler, deleteHandler }) => {
   return (
     <Card className="w-full max-w-sm mx-auto">
       <div className="relative aspect-[4/3] sm:aspect-video">
@@ -27,10 +27,10 @@ const AdminProductCard = ({ product }) => {
               <div className="flex flex-col">
                 <span className="text-sm sm:text-xs line-through text-muted-foreground">
                   {" "}
-                  ${product?.price}
+                  ${product?.salePrice}
                 </span>
                 <span className="text-base sm:text-lg font-bold  text-orange-500">
-                  ${product?.salePrice}
+                  ${product?.price}
                 </span>
               </div>
             ) : (
@@ -42,8 +42,13 @@ const AdminProductCard = ({ product }) => {
         </div>
       </CardContent>
       <CardFooter className="flex justify-between p-3 sm:px-3 border-t gap-2">
-        <Button className="bg-green-500 ">Edit</Button>
-        <Button className="text-red-500 bg-slate-100 hover:bg-orange-500 hover:text-slate-200">
+        <Button className="bg-green-500 " onClick={() => editHandler(product)}>
+          Edit
+        </Button>
+        <Button
+          onClick={() => deleteHandler(product._id)}
+          className="text-red-500 bg-slate-100 hover:bg-orange-500 hover:text-slate-200"
+        >
           Delete
         </Button>
       </CardFooter>

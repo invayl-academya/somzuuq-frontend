@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { logoutUser } from "@/redux/authSlice";
+import { fetchCartItems } from "@/redux/cartSlice";
 import { AvatarFallback } from "@radix-ui/react-avatar";
 import {
   AlignJustify,
@@ -18,9 +19,10 @@ import {
   ShoppingCart,
   UserCog,
 } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import CartScreen from "./CartScreen";
 
 export const shopingHeaderNav = [
   {
@@ -78,22 +80,40 @@ export const MenuItems = () => {
 
 export const UserContent = () => {
   const { user } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.cart);
+  const [openCartSheet, setOpenCartSheet] = useState(false);
 
   const dispatch = useDispatch();
+
+  console.log("cart", cartItems);
+
+  useEffect(() => {
+    if (user._id) {
+      dispatch(fetchCartItems(user._id));
+    }
+  }, [user]);
+
   const logoutHandler = () => {
     dispatch(logoutUser());
   };
   return (
     <div className="flex items-center gap-6">
-      <Button
-        variant="ghost"
-        className="relative text-slate-200 hover:text-blue-500"
-      >
-        <ShoppingCart />
-        <span className="absolute -top-2 -right-2 text-sm  bg-slate-100 text-gray-800 rounded-full w-5 h-5 flex items-center justify-center">
-          0
-        </span>
-      </Button>
+      <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
+        <Button
+          variant="ghost"
+          className="relative text-slate-200 hover:text-blue-500"
+          onClick={() => setOpenCartSheet(true)}
+        >
+          <ShoppingCart />
+          <span className="absolute -top-2 -right-2 text-sm  bg-slate-100 text-gray-800 rounded-full w-5 h-5 flex items-center justify-center">
+            {cartItems?.items?.length}
+          </span>
+        </Button>
+
+        {openCartSheet && (
+          <CartScreen onClose={() => setOpenCartSheet(false)} />
+        )}
+      </Sheet>
 
       {/* user dropdown  */}
       <DropdownMenu>

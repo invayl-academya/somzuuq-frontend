@@ -1,9 +1,37 @@
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { addToCart, fetchCartItems } from "@/redux/cartSlice";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 const ProductCard = ({ product }) => {
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const handleAddToCart = () => {
+    if (!user || !user._id) {
+      toast.error("please Login to add Cart");
+      return;
+    }
+
+    dispatch(
+      addToCart({
+        userId: user._id,
+        productId: product._id,
+        qty: 1,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        toast.success("added to Cart");
+        dispatch(fetchCartItems(user._id));
+      })
+      .catch(() => {
+        toast.error("failed to add cart");
+      });
+  };
   return (
     <Card className="w-full max-w-sm mx-auto shadow-sm">
       <div className="relative">
@@ -51,6 +79,15 @@ const ProductCard = ({ product }) => {
           )}
         </div>
       </CardContent>
+      <CardFooter>
+        <Button
+          disabled={product?.countInStock === 0}
+          className="w-full"
+          onClick={handleAddToCart}
+        >
+          Add To Cart
+        </Button>
+      </CardFooter>
     </Card>
   );
 };

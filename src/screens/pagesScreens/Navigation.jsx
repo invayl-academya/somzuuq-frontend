@@ -85,7 +85,7 @@ export const UserContent = () => {
 
   const dispatch = useDispatch();
 
-  console.log("cart", cartItems);
+  // console.log("cart", cartItems);
 
   useEffect(() => {
     if (user._id) {
@@ -132,6 +132,14 @@ export const UserContent = () => {
             <Link to="/shop/profile" className="flex items-center gap-4 ">
               <UserCog />
               Profile
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+
+          <DropdownMenuItem>
+            <Link to="/shop/myorders" className="flex items-center gap-4 ">
+              <UserCog />
+              My Orders
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />

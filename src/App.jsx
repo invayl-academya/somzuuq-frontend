@@ -17,6 +17,11 @@ import AdminUsersList from "./screens/adminScreens/AdminUsersList";
 import ShopProducts from "./screens/pagesScreens/Listing";
 import NotFound from "./screens/adminScreens/components/Not-Found";
 import ProductDetails from "./screens/pagesScreens/ProductDetails";
+import ShippingScreen from "./screens/orderScreens/ShippingScreen";
+import PaymentMethod from "./screens/orderScreens/PaymentMethod";
+import Placeorder from "./screens/orderScreens/Placeorder";
+import OrderScreen from "./screens/orderScreens/OrderScreen";
+import OrderDetailScreen from "./screens/orderScreens/orderDetailScreen";
 
 function App() {
   return (
@@ -55,6 +60,13 @@ function App() {
           <Route path="product/:id" element={<ProductDetails />} />
 
           <Route path="home" element={<ShoppingProducts />} />
+          <Route path="shipping" element={<ShippingScreen />} />
+          <Route path="payment" element={<PaymentMethod />} />
+          <Route path="placeorder" element={<Placeorder />} />
+          <Route path="order/:id" element={<OrderDetailScreen />} />
+
+          <Route path="myorders" element={<OrderScreen />} />
+
           <Route path="profile" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
         </Route>

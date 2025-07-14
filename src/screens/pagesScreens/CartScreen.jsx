@@ -1,10 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { fetchCartItems } from "@/redux/cartSlice";
+import {
+  deleteCartItem,
+  fetchCartItems,
+  updateCartQty,
+} from "@/redux/cartSlice";
 import { TrashIcon } from "lucide-react";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const CartScreen = ({ onClose }) => {
   const { user } = useSelector((state) => state.auth);
@@ -22,6 +27,36 @@ const CartScreen = ({ onClose }) => {
     const price = item.salePrice > 0 ? item.salePrice : item.price;
     return sum + price * item.qty;
   }, 0);
+
+  const handleQtyChange = async (productId, qty) => {
+    if (qty < 1) return;
+    try {
+      await dispatch(
+        updateCartQty({ userId: user._id, productId, qty })
+      ).unwrap();
+      dispatch(fetchCartItems(user._id));
+    } catch (error) {
+      toast.error("qty update failed", error);
+    }
+  };
+
+  async function handleDeletecart(productId) {
+    try {
+      await dispatch(deleteCartItem({ userId: user._id, productId }))
+        .unwrap()
+        .then(() => {
+          toast.success("cart deleted succesfully");
+        });
+      dispatch(fetchCartItems(user._id));
+    } catch (error) {
+      console.log("delete failed", error);
+    }
+  }
+
+  const handleCheckout = () => {
+    onClose?.();
+    navigate("/shop/shipping");
+  };
   return (
     <SheetContent className="sm:max-w-md flex flex-col z-50">
       <SheetHeader>
@@ -48,12 +83,24 @@ const CartScreen = ({ onClose }) => {
                 </h4>
 
                 <div className="flex items-center gap-2 mt-2">
-                  <Button variant="outline" className="h-6 w-6 p-0">
+                  <Button
+                    variant="outline"
+                    className="h-6 w-6 p-0"
+                    onClick={() =>
+                      handleQtyChange(item.productId, item.qty - 1)
+                    }
+                  >
                     {" "}
                     -
                   </Button>
                   <span>{item.qty}</span>
-                  <Button variant="outline" className="h-6 w-6 p-0">
+                  <Button
+                    onClick={() =>
+                      handleQtyChange(item.productId, item.qty + 1)
+                    }
+                    variant="outline"
+                    className="h-6 w-6 p-0"
+                  >
                     +
                   </Button>
                 </div>
@@ -62,7 +109,11 @@ const CartScreen = ({ onClose }) => {
                   <p className="text-sm text-gray-500">
                     $ {item.price} * {item.qty}
                   </p>
-                  <Button variant="outline" className="w-6 h-6 bg-orange-600 ">
+                  <Button
+                    onClick={() => handleDeletecart(item.productId)}
+                    variant="outline"
+                    className="w-6 h-6 bg-orange-600 "
+                  >
                     <TrashIcon />
                   </Button>
                 </div>
@@ -78,7 +129,10 @@ const CartScreen = ({ onClose }) => {
           <span className="mr-3"> $ {total}</span>
         </div>
 
-        <Button className="w-full mt-4 bg-green-500 text-white">
+        <Button
+          onClick={handleCheckout}
+          className="w-full mt-4 bg-green-500 text-white"
+        >
           CheckOut
         </Button>
       </div>

@@ -1,6 +1,5 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
-import HomeScreen from "./components/HomeScreen";
 import Login from "./screens/userScreens/Login";
 import Layout from "./screensLayout/userlayout/Layout";
 import AdminLayout from "./screensLayout/adminLayout/adminLayout";
@@ -8,7 +7,6 @@ import AdminDashboard from "./screens/adminScreens/Dashboard";
 import Register from "./screens/userScreens/Register";
 import AdminProducts from "./screens/adminScreens/AdminProducts";
 import ShoppingLayout from "./screensLayout/pageslayout/ShoppingLayout";
-import ShoppingProducts from "./screens/pagesScreens/ShoppingProducts";
 import { Toaster } from "./components/ui/sonner";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./screens/userScreens/Profile";
@@ -22,12 +20,15 @@ import PaymentMethod from "./screens/orderScreens/PaymentMethod";
 import Placeorder from "./screens/orderScreens/Placeorder";
 import OrderScreen from "./screens/orderScreens/OrderScreen";
 import OrderDetailScreen from "./screens/orderScreens/orderDetailScreen";
+import HomeScreen from "./screens/pagesScreens/ShoppingProducts";
 
 function App() {
   return (
     <div>
       <Routes>
-        <Route path="/" element={<HomeScreen />} />
+        {/* <Route path="/" element={<HomeScreen />} /> */}
+
+        <Route path="/" element={<Navigate to="/shop/home" />} />
 
         <Route
           path="/admin"
@@ -59,7 +60,7 @@ function App() {
           <Route path="products" element={<ShopProducts />} />
           <Route path="product/:id" element={<ProductDetails />} />
 
-          <Route path="home" element={<ShoppingProducts />} />
+          <Route path="home" element={<HomeScreen />} />
           <Route path="shipping" element={<ShippingScreen />} />
           <Route path="payment" element={<PaymentMethod />} />
           <Route path="placeorder" element={<Placeorder />} />

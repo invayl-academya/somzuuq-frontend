@@ -206,14 +206,16 @@ const OrderScreen = () => {
                           </h3>
                           <div className="text-sm text-gray-600">
                             <div>{order.paymentMethod}</div>
-                            {order.isPaid && (
+                            {order?.isPaid && (
                               <div className="mt-1">
                                 <Badge className="bg-green-100 text-green-800 text-xs">
                                   Paid on{" "}
-                                  {format(
-                                    new Date(order.paidAt),
-                                    "MMM dd, yyyy"
-                                  )}
+                                  {order.paidAt
+                                    ? format(
+                                        new Date(order.paidAt),
+                                        "MMM dd, yyyy"
+                                      )
+                                    : "00:000"}
                                 </Badge>
                               </div>
                             )}

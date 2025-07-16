@@ -1,19 +1,45 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { addToCart, fetchCartItems } from "@/redux/cartSlice";
 import { getProductDetails } from "@/redux/productSlice";
 import { MoveLeft } from "lucide-react";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const ProductDetails = () => {
   const { id } = useParams();
 
   const dispatch = useDispatch();
   const { product, isLoading } = useSelector((state) => state.products);
+  const { user } = useSelector((state) => state.auth);
 
-  console.log("product", product);
+  // console.log("product", product);
+
+  const handleAddToCart = () => {
+    if (!user || !user._id) {
+      toast.error("please Login to add Cart");
+      return;
+    }
+
+    dispatch(
+      addToCart({
+        userId: user._id,
+        productId: product._id,
+        qty: 1,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        toast.success("added to Cart");
+        dispatch(fetchCartItems(user._id));
+      })
+      .catch(() => {
+        toast.error("failed to add cart");
+      });
+  };
 
   useEffect(() => {
     if (id) dispatch(getProductDetails(id));
@@ -100,6 +126,7 @@ const ProductDetails = () => {
           <Button
             disabled={countInStock === 0}
             className="mt-2 mb-2 bg-[#C562AF]"
+            onClick={handleAddToCart}
           >
             Add To Cart
           </Button>

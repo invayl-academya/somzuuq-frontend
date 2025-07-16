@@ -1,7 +1,14 @@
 import React from "react";
+import BannerSlide from "./components/BannerSlide";
+import CategoryGrid from "./components/CategoryGrid";
 
-const ShoppingProducts = () => {
-  return <div>ShoppingProducts</div>;
+const HomeScreen = () => {
+  return (
+    <>
+      <BannerSlide />
+      <CategoryGrid />
+    </>
+  );
 };
 
-export default ShoppingProducts;
+export default HomeScreen;

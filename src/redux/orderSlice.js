@@ -6,6 +6,12 @@ const initialState = {
   myOrders: [],
   allOrders: [],
   orderDetails: {},
+  paypalClientId: null,
+  paypalLoading: false,
+  loading: false,
+  success: false,
+  order: null,
+  error: null,
 };
 
 export const createOrder = createAsyncThunk(
@@ -58,6 +64,24 @@ export const fetchOrderById = createAsyncThunk(
     }
   }
 );
+
+export const fetchPaypalClientId = createAsyncThunk(
+  "orders/payaplclient",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${APP_URL}/config/paypal`, {
+        withCredentials: true,
+      });
+
+      return response.data.clientId;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || "failed to create order"
+      );
+    }
+  }
+);
+
 const orderSlice = createSlice({
   name: "orders",
   initialState,
@@ -109,6 +133,22 @@ const orderSlice = createSlice({
       })
       .addCase(fetchOrderById.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload;
+      })
+
+      // fetch paypal client id
+      .addCase(fetchPaypalClientId.pending, (state) => {
+        state.paypalLoading = true;
+        state.success = false;
+        state.error = null;
+      })
+      .addCase(fetchPaypalClientId.fulfilled, (state, action) => {
+        state.paypalLoading = false;
+        state.success = true;
+        state.paypalClientId = action.payload;
+      })
+      .addCase(fetchPaypalClientId.rejected, (state, action) => {
+        state.paypalLoading = false;
         state.error = action.payload;
       });
   },

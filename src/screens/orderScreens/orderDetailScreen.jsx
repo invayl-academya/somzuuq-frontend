@@ -1,9 +1,11 @@
 import { ErrorComponent, Loading } from "@/components/Loading";
-import { fetchOrderById } from "@/redux/orderSlice";
-import { Check, X } from "lucide-react";
+import { fetchOrderById, fetchPaypalClientId } from "@/redux/orderSlice";
+import { Check, DiscAlbum, X } from "lucide-react";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import PaypalCheckout from "./PaypalCheckout";
+import { usePayPalScriptReducer } from "@paypal/react-paypal-js";
 
 const OrderDetailScreen = () => {
   const { id: orderId } = useParams();
@@ -17,6 +19,28 @@ const OrderDetailScreen = () => {
       dispatch(fetchOrderById(orderId));
     }
   }, [orderId, dispatch]);
+
+  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
+
+  useEffect(() => {
+    const loadPayPalScript = async () => {
+      try {
+        const clientId = await dispatch(fetchPaypalClientId()).unwrap();
+        paypalDispatch({
+          type: "resetOptions",
+          value: {
+            "client-id": clientId,
+            currency: "USD",
+          },
+        });
+        paypalDispatch({ type: "setLoadingStatus", value: "pending" });
+      } catch (error) {
+        console.log("error to load paypal script", error);
+      }
+    };
+
+    loadPayPalScript();
+  }, [dispatch, paypalDispatch]);
 
   if (loading) return <Loading />;
   if (error) return <ErrorComponent error={error} />;
@@ -78,52 +102,52 @@ const OrderDetailScreen = () => {
               )}
             </p>
           </div>
-        </div>
 
-        {/* payment info  */}
-        <div className="">
-          <h2 className="text-xl font-semibold mb-4 text-gray-700">
-            payment Method
-          </h2>
-          <p>{paymentMethod}</p>
+          {/* payment info  */}
+          <div className="">
+            <h2 className="text-xl font-semibold mb-4 text-gray-700">
+              payment Method
+            </h2>
+            <p>{paymentMethod}</p>
 
-          <p
-            className={`mt-3 font-semibold ${
-              isPaid ? "text-green-600" : "text-red-600"
-            }`}
-          >
-            {isPaid ? (
-              <p className="flex items-center space-x-3">
-                <Check /> paid
-              </p>
-            ) : (
-              <span className="flex items-center space-x-3">
-                <X /> not Paid
-              </span>
-            )}
-          </p>
-        </div>
-        {/* // right side details  */}
-        <div className="bg-white rounded-xl p-5 border shadow-md">
-          <h2>Order Items </h2>
-          {orderItems?.map((item, index) => (
-            <div key={item._id}>
-              <img
-                src={item.image}
-                className="w-16 h-16 object-cover rounded border"
-              />
-
-              <div className="flex-1">
-                <p className="font-medium text-slate-400">{item.name}</p>
-                <p className="text-sm text-[#0E2148]">
-                  {item.qty} x {item.price}
-                  <span className="font-semibold ml-3">
-                    ${(item.qty * item.price).toFixed(2)}
-                  </span>
+            <p
+              className={`mt-3 font-semibold ${
+                isPaid ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {isPaid ? (
+                <p className="flex items-center space-x-3">
+                  <Check /> paid
                 </p>
+              ) : (
+                <span className="flex items-center space-x-3">
+                  <X /> not Paid
+                </span>
+              )}
+            </p>
+          </div>
+          {/* // right side details  */}
+          <div className="bg-white rounded-xl p-5 border shadow-md">
+            <h2>Order Items </h2>
+            {orderItems?.map((item, index) => (
+              <div key={item._id}>
+                <img
+                  src={item.image}
+                  className="w-16 h-16 object-cover rounded border"
+                />
+
+                <div className="flex-1">
+                  <p className="font-medium text-slate-400">{item.name}</p>
+                  <p className="text-sm text-[#0E2148]">
+                    {item.qty} x {item.price}
+                    <span className="font-semibold ml-3">
+                      ${(item.qty * item.price).toFixed(2)}
+                    </span>
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         {/* // price Sumery  */}
@@ -155,6 +179,21 @@ const OrderDetailScreen = () => {
               </div>
 
               <p>Order Placed on : {new Date(createdAt).toLocaleString()}</p>
+            </div>
+
+            <div className="mt-3">
+              {!isPaid && (
+                <div className="bg-white rounded-xl p-4 shadow-lg">
+                  <h2 className="text-lg font-semibold text-gray-700">
+                    Complete Payment
+                  </h2>
+                  {isPending ? (
+                    <Loading />
+                  ) : (
+                    <PaypalCheckout orderId={orderId} totalPrice={totalPrice} />
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

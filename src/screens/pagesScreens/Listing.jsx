@@ -40,6 +40,17 @@ const ShopProducts = () => {
     setSearchParams(queryString);
   }, [filters]);
 
+  useEffect(() => {
+    const queryFilters = {};
+
+    searchParams.forEach((value, key) => {
+      queryFilters[key] = decodeURIComponent(value).split(",");
+    });
+
+    setFilters(queryFilters);
+    sessionStorage.setItem("filters", JSON.stringify(queryFilters));
+  }, [searchParams]);
+
   const handleFilter = (key, option) => {
     const updatedFilters = { ...filters };
     const current = updatedFilters[key];

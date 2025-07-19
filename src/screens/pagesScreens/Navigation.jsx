@@ -61,7 +61,17 @@ export const MenuItems = () => {
   const navigate = useNavigate();
 
   const handleNavigate = (item) => {
-    navigate(item.path);
+    const id = item.id.toLowerCase();
+
+    const isFilterable = !["home", "products"].includes(id);
+
+    if (isFilterable) {
+      const filter = { caegory: [id] };
+      sessionStorage.setItem("filters", JSON.stringify(filter));
+      navigate(`/shop/products?category=${id}`);
+    } else {
+      navigate(item.path);
+    }
   };
   return (
     <div className="flex items-center  mb-3 lg:mb-0 lg:items-center gap-3">

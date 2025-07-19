@@ -12,6 +12,7 @@ import {
   StarIcon,
 } from "lucide-react";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export const categories = [
   {
@@ -40,8 +41,8 @@ export const categories = [
   },
 
   {
-    id: "shoes",
-    label: "Shoes",
+    id: "footwear",
+    label: "footwear",
     icon: Footprints,
     bgColor: "bg-gradient-to-br from-yellow-400 to-orange-500 text-white",
   },
@@ -62,6 +63,23 @@ const brandWithIcon = [
   { id: "gucci", label: "Gucci", icon: GemIcon }, // luxury
 ];
 const CategoryGrid = () => {
+  const navigate = useNavigate();
+
+  const handleNavigateProducts = (itemId, section) => {
+    sessionStorage.removeItem("filters");
+    const currentFilter = {
+      [section]: [itemId.id],
+    };
+
+    // console.log(itemId, section);
+
+    sessionStorage.setItem("filters", JSON.stringify(currentFilter));
+
+    // ADD FILTER TO QUERY SRING
+    const queryString = `${section}=${encodeURIComponent(itemId.id)}`;
+    console.log("query", queryString);
+    navigate(`/shop/products?${queryString}`);
+  };
   return (
     <section className="py-16 px-4 lg:px-8 max-w-7xl mx-auto">
       {/* Title */}
@@ -74,22 +92,26 @@ const CategoryGrid = () => {
 
       {/* Category Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
-        {categories.map(({ id, label, icon: Icon, bgColor }) => (
-          <div
-            key={id}
-            className="group rounded-xl flex flex-col items-center justify-center p-4 bg-white shadow hover:shadow-xl transition duration-300 transform hover:-translate-y-1 cursor-pointer"
-          >
+        {categories.map((category) => {
+          const { id, label, icon: Icon, bgColor } = category;
+          return (
             <div
-              className={`w-16 h-16 flex items-center justify-center rounded-full mb-3 ${bgColor}`}
+              key={id}
+              onClick={() => handleNavigateProducts(category, "category")}
+              className="group rounded-xl flex flex-col items-center justify-center p-4 bg-white shadow hover:shadow-xl transition duration-300 transform hover:-translate-y-1 cursor-pointer"
             >
-              <Icon className="w-6 h-6" />
+              <div
+                className={`w-16 h-16 flex items-center justify-center rounded-full mb-3 ${bgColor}`}
+              >
+                <Icon className="w-6 h-6" />
+              </div>
+              <h3 className="text-md font-semibold text-gray-800">{label}</h3>
+              <span className="text-sm mt-1 text-indigo-600 opacity-0 group-hover:opacity-100 transition">
+                Shop Now →
+              </span>
             </div>
-            <h3 className="text-md font-semibold text-gray-800">{label}</h3>
-            <span className="text-sm mt-1 text-indigo-600 opacity-0 group-hover:opacity-100 transition">
-              Shop Now →
-            </span>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Brand Section */}
@@ -98,15 +120,19 @@ const CategoryGrid = () => {
           Popular Brands
         </h3>
         <div className="flex flex-wrap justify-center gap-3">
-          {brandWithIcon.map(({ id, label, icon: Icon }) => (
-            <div
-              key={id}
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-indigo-100 text-sm font-medium text-gray-700 transition duration-300"
-            >
-              {Icon && <Icon className="w-4 h-4" />}
-              {label}
-            </div>
-          ))}
+          {brandWithIcon.map((brand) => {
+            const { id, label, icon: Icon } = brand;
+            return (
+              <div
+                key={id}
+                onClick={() => handleNavigateProducts(brand, "brand")}
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-indigo-100 text-sm font-medium text-gray-700 transition duration-300"
+              >
+                {Icon && <Icon className="w-4 h-4" />}
+                {label}
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

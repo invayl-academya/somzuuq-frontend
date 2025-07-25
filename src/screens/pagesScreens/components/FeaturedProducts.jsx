@@ -93,10 +93,10 @@ const FeaturedProducts = () => {
                   {product.salePrice > 0 ? (
                     <>
                       <span className="text-red-600 font-bold">
-                        ${product.salePrice}
+                        ${product.price}
                       </span>
                       <span className="line-through text-gray-400 text-sm">
-                        ${product.price}
+                        ${product.salePrice}
                       </span>
                     </>
                   ) : (

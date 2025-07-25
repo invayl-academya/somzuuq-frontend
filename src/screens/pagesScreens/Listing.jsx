@@ -3,6 +3,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
+  DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -131,7 +132,7 @@ const ShopProducts = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuGroup value={sort} onValueChange={setSort}>
+                <DropdownMenuRadioGroup value={sort} onValueChange={setSort}>
                   {sortOptions?.map((sortItem) => (
                     <DropdownMenuRadioItem
                       value={sortItem.id}
@@ -140,7 +141,7 @@ const ShopProducts = () => {
                       {sortItem.label}
                     </DropdownMenuRadioItem>
                   ))}
-                </DropdownMenuGroup>
+                </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

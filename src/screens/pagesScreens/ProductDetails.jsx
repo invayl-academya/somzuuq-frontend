@@ -3,11 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { addToCart, fetchCartItems } from "@/redux/cartSlice";
 import { getProductDetails } from "@/redux/productSlice";
-import { MoveLeft } from "lucide-react";
-import React, { useEffect } from "react";
+import { MoveLeft, StarIcon } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import CreateReview from "./components/CreateReview";
+import { deleteReview, fetchReviews } from "@/redux/reviewSlice";
+import { ErrorComponent, Loading } from "@/components/Loading";
+import UpdateReview from "./components/UpdateReview";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -16,7 +20,17 @@ const ProductDetails = () => {
   const { product, isLoading } = useSelector((state) => state.products);
   const { user } = useSelector((state) => state.auth);
 
+  const {
+    reviews,
+    loading: loadingReview,
+    error: errorReview,
+  } = useSelector((state) => state.reviews);
+
+  const [isUpdateOpen, setIsUpdateOpen] = useState(false);
+  const [selectedReview, setSelectedReview] = useState(null);
+
   // console.log("product", product);
+  // console.log(reviews);
 
   const handleAddToCart = () => {
     if (!user || !user._id) {
@@ -42,7 +56,10 @@ const ProductDetails = () => {
   };
 
   useEffect(() => {
-    if (id) dispatch(getProductDetails(id));
+    if (id) {
+      dispatch(getProductDetails(id));
+      dispatch(fetchReviews(id));
+    }
   }, [id, dispatch]);
 
   if (!product && isLoading) {
@@ -57,7 +74,7 @@ const ProductDetails = () => {
     description,
     price,
     salePrice,
-    rating,
+    rating: productRating,
     numReviews,
     countInStock,
   } = product;
@@ -70,7 +87,6 @@ const ProductDetails = () => {
       >
         <MoveLeft className="w-6 h-4 mr-3" /> Back to Products
       </Link>
-
       <div className="grid gir-cols-1 md:grid-cols-2 gap-10 bg-slate-100">
         <div>
           <img
@@ -91,7 +107,20 @@ const ProductDetails = () => {
             </span>
           </div>
           {/* / review container  */}
-          <div>reviews</div>
+          <div className="flex items-center  space-x-1 text-yellow-500">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <StarIcon
+                key={i}
+                className={`w-5 h-5 ${
+                  i < Math.round(productRating)
+                    ? "fill-yellow-400"
+                    : "fill-gray-300"
+                }`}
+              />
+            ))}
+
+            <span className="text-sm text-gray-600">{numReviews} reviews</span>
+          </div>
 
           {salePrice > 0 ? (
             <div className="flex items-center gap-4">
@@ -132,6 +161,75 @@ const ProductDetails = () => {
           </Button>
         </div>
       </div>
+      {/* // reviews  */}
+
+      <div>
+        <h2>Customer Reviews</h2>
+        {loadingReview && <Loading />}
+        {errorReview && <ErrorComponent error={errorReview} />}
+        {reviews?.map((rev) => (
+          <div key={rev._id} className="border-b py-3">
+            <div className="flex justify-between">
+              <p className="text-sm  text-gray-600">{rev?.user.name}</p>
+              <p className="text-sm  text-gray-600">
+                {new Date(rev?.createdAt).toLocaleString()}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-1 my-1">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <StarIcon
+                  key={i}
+                  className={`w-4 h-4 ${
+                    i < rev.rating ? "fill-yellow-500" : "fill-gray-300"
+                  }`}
+                />
+              ))}
+            </div>
+            <p>{rev?.comment}</p>
+
+            {user && user._id === rev.user?._id && (
+              <div className="flex space-x-2">
+                <Button
+                  className="bg-orange-700 text-gray-200"
+                  onClick={() => {
+                    if (confirm("are you sure u want delte this review")) {
+                      dispatch(deleteReview(id))
+                        .unwrap()
+                        .then(() => {
+                          toast.success("deleted Review ");
+                          dispatch(fetchReviews(id));
+                          dispatch(getProductDetails(id));
+                        });
+                    }
+                  }}
+                >
+                  delete
+                </Button>
+                <Button
+                  onClick={() => {
+                    setSelectedReview(rev);
+                    setIsUpdateOpen(true);
+                  }}
+                  variant="outline"
+                  className="bg-orange-400"
+                >
+                  Edit Review
+                </Button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <CreateReview productId={id} />
+
+      <UpdateReview
+        isOpen={isUpdateOpen}
+        onClose={() => setIsUpdateOpen(false)}
+        productId={id}
+        existingReview={selectedReview}
+      />
     </div>
   );
 };

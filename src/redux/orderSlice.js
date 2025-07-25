@@ -82,6 +82,23 @@ export const fetchPaypalClientId = createAsyncThunk(
   }
 );
 
+export const getAllOrders = createAsyncThunk(
+  "orders/all",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${APP_URL}/orders/all`, {
+        withCredentials: true, // must send Cookie
+      });
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Registration Failed"
+      );
+    }
+  }
+);
+
 const orderSlice = createSlice({
   name: "orders",
   initialState,
@@ -120,6 +137,21 @@ const orderSlice = createSlice({
         state.error = action.payload;
       })
 
+      // fetch all orders
+      .addCase(getAllOrders.pending, (state) => {
+        state.loading = true;
+        state.success = false;
+        state.error = null;
+      })
+      .addCase(getAllOrders.fulfilled, (state, action) => {
+        state.loading = false;
+
+        state.allOrders = action.payload;
+      })
+      .addCase(getAllOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "failed to fetch orders";
+      })
       // get orer by Id
       .addCase(fetchOrderById.pending, (state) => {
         state.loading = true;

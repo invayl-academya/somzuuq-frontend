@@ -4,6 +4,7 @@ import { APP_URL } from "./constants";
 import { toast } from "sonner";
 
 const initialState = {
+  users: [],
   user: null,
   isLoading: false,
   isAuthenticated: false,
@@ -88,6 +89,23 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
+export const getAllUsers = createAsyncThunk(
+  "auth/users/all",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${APP_URL}/users/all`, {
+        withCredentials: true, // must send Cookie
+      });
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Registration Failed"
+      );
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -144,7 +162,7 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
-        console.log(action.payload.user);
+        // console.log(action.payload.user);
         state.isLoading = false;
         state.user = action.payload.user;
         state.isAuthenticated = true;
@@ -159,6 +177,20 @@ const authSlice = createSlice({
 
         state.error = action.payload || "something went Wrong";
       });
+
+    // fetch all users
+    builder.addCase(getAllUsers.pending, (state) => {
+      state.isLoading = true;
+      state.error = null;
+    });
+    builder.addCase(getAllUsers.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.users = action.payload;
+    });
+    builder.addCase(getAllUsers.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload || "failed to fetch users";
+    });
   },
 });
 

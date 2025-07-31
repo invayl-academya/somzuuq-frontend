@@ -34,7 +34,9 @@ const Register = () => {
     dispatch(registerUser(formData)).then((data) => {
       if (data?.payload.success) {
         toast.success("Register Succesfully");
-        navigate("/shop/home");
+        navigate("/auth/login");
+      } else {
+        toast.error(data.payload || "failed to register");
       }
       console.log("regD", data);
     });

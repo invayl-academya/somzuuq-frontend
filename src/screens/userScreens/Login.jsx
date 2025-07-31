@@ -24,7 +24,7 @@ const Login = () => {
     if (user) {
       navigate("/shop/home");
     }
-  }, [navigate, user]);
+  }, [navigate]);
 
   const onSubmit = (e) => {
     e.preventDefault();

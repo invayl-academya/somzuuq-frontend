@@ -15,9 +15,7 @@ export const registerUser = createAsyncThunk(
   "auth/register",
   async (formdata, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${APP_URL}/users/register`, formdata, {
-        withCredentials: true,
-      });
+      const response = await axios.post(`${APP_URL}/users/register`, formdata);
 
       return response.data;
     } catch (error) {
@@ -106,6 +104,60 @@ export const getAllUsers = createAsyncThunk(
   }
 );
 
+export const updateUserProfile = createAsyncThunk(
+  "auth/upateuserprofile",
+  async (formdata, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`${APP_URL}/users/profile`, formdata, {
+        withCredentials: true, // must send Cookie
+      });
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Registration Failed"
+      );
+    }
+  }
+);
+
+export const updateUserAdmiStatus = createAsyncThunk(
+  "auth/adminStatus",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(
+        `${APP_URL}/users/role/${userId}`,
+        {},
+        {
+          withCredentials: true, // must send Cookie
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Registration Failed"
+      );
+    }
+  }
+);
+
+export const deleteUserById = createAsyncThunk(
+  "auth/deleteuserId",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(`${APP_URL}/users/${userId}`, {
+        withCredentials: true, // must send Cookie
+      });
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Registration Failed"
+      );
+    }
+  }
+);
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -118,7 +170,8 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload.user;
+        state.user = null;
+        state.isAuthenticated = false;
         state.error = null;
       })
       .addCase(registerUser.rejected, (state, action) => {
@@ -190,6 +243,56 @@ const authSlice = createSlice({
     builder.addCase(getAllUsers.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.payload || "failed to fetch users";
+    });
+
+    // update user profile
+    builder.addCase(updateUserProfile.pending, (state) => {
+      state.isLoading = true;
+      state.error = null;
+    });
+    builder.addCase(updateUserProfile.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.user = action.payload.user;
+      state.error = null;
+    });
+    builder.addCase(updateUserProfile.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload || "failed to update  user";
+    });
+
+    // update user status admin
+    builder.addCase(updateUserAdmiStatus.pending, (state) => {
+      state.isLoading = true;
+      state.error = null;
+    });
+    builder.addCase(updateUserAdmiStatus.fulfilled, (state, action) => {
+      state.isLoading = false;
+      const updatedUser = action.payload;
+
+      state.users = state.users.map((user) =>
+        user._id === updatedUser._id ? updatedUser : user
+      );
+    });
+    builder.addCase(updateUserAdmiStatus.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload || "failed to update  user status";
+    });
+
+    // delete User
+    builder.addCase(deleteUserById.pending, (state) => {
+      state.isLoading = true;
+      state.error = null;
+    });
+    builder.addCase(deleteUserById.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.users = state.users.filter(
+        (user) => user._id !== action.payload.userId
+      );
+      state.error = null;
+    });
+    builder.addCase(deleteUserById.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload || "failed to update  user";
     });
   },
 });

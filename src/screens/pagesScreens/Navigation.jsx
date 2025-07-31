@@ -15,6 +15,7 @@ import { AvatarFallback } from "@radix-ui/react-avatar";
 import {
   AlignJustify,
   Blinds,
+  Lock,
   LogOut,
   ShoppingCart,
   UserCog,
@@ -59,6 +60,7 @@ export const shopingHeaderNav = [
 
 export const MenuItems = () => {
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
 
   const handleNavigate = (item) => {
     const id = item.id.toLowerCase();
@@ -74,16 +76,24 @@ export const MenuItems = () => {
     }
   };
   return (
-    <div className="flex items-center  mb-3 lg:mb-0 lg:items-center gap-3">
-      {shopingHeaderNav?.map((nav) => (
-        <button
-          onClick={() => handleNavigate(nav)}
-          className="text-md font-bold sm:text-gray-700 lg:text-slate-200 pointer"
-          key={nav.id}
-        >
-          {nav.id}
-        </button>
-      ))}
+    <div className="flex items-center gap-8">
+      <div className="flex items-center  mb-3 lg:mb-0 lg:items-center gap-3">
+        {shopingHeaderNav?.map((nav) => (
+          <button
+            onClick={() => handleNavigate(nav)}
+            className="text-md font-bold sm:text-gray-700 lg:text-slate-200 pointer"
+            key={nav.id}
+          >
+            {nav.id}
+          </button>
+        ))}
+      </div>
+
+      {!user && (
+        <div>
+          <Link to="/auth/login">Login</Link>
+        </div>
+      )}
     </div>
   );
 };
@@ -98,8 +108,8 @@ export const UserContent = () => {
   // console.log("cart", cartItems);
 
   useEffect(() => {
-    if (user._id) {
-      dispatch(fetchCartItems(user._id));
+    if (user?._id) {
+      dispatch(fetchCartItems(user?._id));
     }
   }, [user]);
 
@@ -116,7 +126,7 @@ export const UserContent = () => {
         >
           <ShoppingCart />
           <span className="absolute -top-2 -right-2 text-sm  bg-slate-100 text-gray-800 rounded-full w-5 h-5 flex items-center justify-center">
-            {cartItems?.items?.length}
+            {cartItems?.items ? cartItems?.items.length : 0}
           </span>
         </Button>
 
@@ -153,6 +163,16 @@ export const UserContent = () => {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
+
+          {user && user?.isAdmin && (
+            <DropdownMenuItem>
+              <Link to="/admin/dashboard" className="flex items-center gap-4 ">
+                <Lock />
+                Admin View
+              </Link>
+            </DropdownMenuItem>
+          )}
+
           <DropdownMenuItem
             onClick={logoutHandler}
             className="flex items-center gap-4 "

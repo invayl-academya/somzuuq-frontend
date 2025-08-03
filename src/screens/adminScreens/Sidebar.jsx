@@ -7,6 +7,7 @@ import {
 import {
   BadgeCent,
   ChartColumnStacked,
+  ChartNoAxesColumn,
   LayoutDashboard,
   ShoppingBasket,
   Users,
@@ -32,6 +33,12 @@ export const adminSidebarMenu = [
     label: "Orders",
     path: "/admin/orders",
     icon: <BadgeCent />,
+  },
+  {
+    id: "deliveredOrder",
+    label: "Delivered Orders",
+    path: "/admin/delivered/orders",
+    icon: <ChartNoAxesColumn />,
   },
   {
     id: "Users",

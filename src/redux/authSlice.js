@@ -8,6 +8,9 @@ const initialState = {
   user: null,
   isLoading: false,
   isAuthenticated: false,
+  isInitialized: false,
+  usersFetched: false,
+  profileFetched: false,
   error: null,
 };
 
@@ -52,9 +55,6 @@ export const fetchUserProfile = createAsyncThunk(
         headers: {
           "Cache-Control": "no-cache",
           Pragma: "no-cache",
-        },
-        params: {
-          t: Date.now(),
         },
       });
 
@@ -218,16 +218,16 @@ const authSlice = createSlice({
         // console.log(action.payload.user);
         state.isLoading = false;
         state.user = action.payload.user;
+        state.profileFetched = true;
         state.isAuthenticated = true;
-        state.isInitialized = true; // check user
+        state.isInitialized = true;
         state.error = null;
       })
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = false;
-        state.isInitialized = false; // check user
         state.user = null;
-
+        state.isInitialized = true;
         state.error = action.payload || "something went Wrong";
       });
 
@@ -239,10 +239,12 @@ const authSlice = createSlice({
     builder.addCase(getAllUsers.fulfilled, (state, action) => {
       state.isLoading = false;
       state.users = action.payload;
+      state.usersFetched = true;
     });
     builder.addCase(getAllUsers.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.payload || "failed to fetch users";
+      state.usersFetched = false;
     });
 
     // update user profile

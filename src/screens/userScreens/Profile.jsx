@@ -5,7 +5,9 @@ import { toast } from "sonner";
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const { user, status, error } = useSelector((state) => state.auth);
+  const { user, status, error, profileFetched } = useSelector(
+    (state) => state.auth
+  );
 
   const [formData, setFormData] = useState({
     name: "",
@@ -16,8 +18,10 @@ const Profile = () => {
   const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
-    dispatch(fetchUserProfile());
-  }, [dispatch]);
+    if (!profileFetched) {
+      dispatch(fetchUserProfile());
+    }
+  }, [dispatch, profileFetched]);
 
   useEffect(() => {
     if (user) {

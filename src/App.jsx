@@ -21,8 +21,19 @@ import Placeorder from "./screens/orderScreens/Placeorder";
 import OrderScreen from "./screens/orderScreens/OrderScreen";
 import OrderDetailScreen from "./screens/orderScreens/orderDetailScreen";
 import HomeScreen from "./screens/pagesScreens/ShoppingProducts";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { fetchUserProfile } from "./redux/authSlice";
+import AdminRoutesProtect from "./components/AdminRoutesProtect";
+import AdminOrderDetail from "./screens/adminScreens/AdminOrderDetail";
+import DeliveredOrderScreen from "./screens/adminScreens/DeliveredOrderScreen";
 
 function App() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchUserProfile()); // ✅ fetch on initial load
+  }, [dispatch]);
+
   return (
     <div>
       <Routes>
@@ -33,15 +44,18 @@ function App() {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute>
+            <AdminRoutesProtect>
               <AdminLayout />
-            </ProtectedRoute>
+            </AdminRoutesProtect>
           }
         >
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="products" element={<AdminProducts />} />
           <Route path="orders" element={<AdminOrders />} />
+          <Route path="delivered/orders" element={<DeliveredOrderScreen />} />
+
           <Route path="usersList" element={<AdminUsersList />} />
+          <Route path="order/:id" element={<AdminOrderDetail />} />
         </Route>
 
         <Route path="/auth" element={<Layout />}>

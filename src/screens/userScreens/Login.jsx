@@ -13,18 +13,22 @@ const initialState = {
 
 const Login = () => {
   const [formData, setFormData] = useState(initialState);
-  const { user } = useSelector((state) => state.auth);
+  const { user, isInitialized } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(fetchUserProfile());
+    if (!isInitialized) {
+      dispatch(fetchUserProfile());
+    }
+  }, []);
 
-    if (user) {
+  useEffect(() => {
+    if (isInitialized && user) {
       navigate("/shop/home");
     }
-  }, [navigate]);
+  }, [navigate, user, isInitialized]);
 
   const onSubmit = (e) => {
     e.preventDefault();

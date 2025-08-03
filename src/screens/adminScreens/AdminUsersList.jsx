@@ -12,23 +12,26 @@ import { toast } from "sonner";
 const AdminUsersList = () => {
   const {
     users,
-    isLoading,
+    isLoading: loadingUsers,
     error: userError,
+    usersFetched,
   } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
   // console.log("users", users);
   useEffect(() => {
-    dispatch(getAllUsers());
-  }, [dispatch]);
+    if (!usersFetched) {
+      dispatch(getAllUsers());
+    }
+  }, [dispatch, usersFetched]);
   return (
     <div className="max-w-6xl mx-auto w-full px-4 py-10">
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">
         All Users
       </h2>
 
-      {isLoading ? (
+      {loadingUsers ? (
         <Loading />
       ) : userError ? (
         <div className="text-red-500 text-center font-medium">{userError}</div>
@@ -77,10 +80,12 @@ const AdminUsersList = () => {
                         }`}
                         variant="outline"
                         onClick={() =>
-                          dispatch(updateUserAdmiStatus(user._id)).then(() => {
-                            dispatch(getAllUsers());
-                            toast.success("Updated user Status");
-                          })
+                          dispatch(updateUserAdmiStatus(user._id))
+                            .unwrap()
+                            .then(() => {
+                              dispatch(getAllUsers());
+                              toast.success("Updated user Status");
+                            })
                         }
                       >
                         {user.isAdmin ? "Revoke Admin" : "Make Admin"}
@@ -95,12 +100,14 @@ const AdminUsersList = () => {
                   <td className="px-6 py-4">
                     <Button
                       onClick={() =>
-                        dispatch(deleteUserById(user._id)).then((res) => {
-                          dispatch(getAllUsers());
-                          toast.success(
-                            res?.data || "Deleted user succesfully"
-                          );
-                        })
+                        dispatch(deleteUserById(user._id))
+                          .unwrap()
+                          .then((res) => {
+                            dispatch(getAllUsers());
+                            toast.success(
+                              res?.data || "Deleted user succesfully"
+                            );
+                          })
                       }
                     >
                       Delete{" "}

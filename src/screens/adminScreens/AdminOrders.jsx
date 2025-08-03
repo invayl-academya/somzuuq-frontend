@@ -224,7 +224,7 @@ const AdminOrders = () => {
                               className="bg-orange-300 mt-3 w-full py-3"
                               variant="outline"
                             >
-                              <Link to={`/shop/order/${order._id}`}>
+                              <Link to={`/admin/order/${order._id}`}>
                                 View Details
                               </Link>
                             </Button>

@@ -7,23 +7,26 @@ import { Loading } from "./Loading";
 const ProtectedRoute = ({ children }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isAuthenticated, isInitialized, isLoading } = useSelector(
+  const { isAuthenticated, isLoading, isInitialized } = useSelector(
     (state) => state.auth
   );
 
   useEffect(() => {
+    // only fetch if we haven't checked yet
     if (!isInitialized) {
       dispatch(fetchUserProfile());
     }
   }, [dispatch, isInitialized]);
 
   useEffect(() => {
-    if (!isInitialized && !isAuthenticated) {
+    // ✅ Redirect only after initialization
+    if (isInitialized && !isAuthenticated) {
       navigate("/auth/login");
     }
-  }, [dispatch, isAuthenticated, isInitialized]);
+  }, [isAuthenticated, isInitialized, navigate]);
 
-  if (isLoading && !isInitialized) {
+  // You can show a spinner while checking auth
+  if (isLoading || !isAuthenticated) {
     return <Loading />;
   }
 

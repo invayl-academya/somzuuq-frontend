@@ -120,7 +120,7 @@ const OrderDetailScreen = () => {
               </h2>
             </div>
             <div className="divide-y">
-              {orderItems.map((item) => (
+              {orderItems?.map((item) => (
                 <div key={item._id} className="flex items-center gap-4 py-4">
                   <img
                     src={item.image}

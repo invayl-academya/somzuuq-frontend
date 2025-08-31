@@ -6,7 +6,10 @@ import FeaturedProducts from "./components/FeaturedProducts";
 const HomeScreen = () => {
   return (
     <>
-      <BannerSlide />
+      <div className="mt-0 pt-0 overflow-visible relative z-10">
+        <BannerSlide />
+      </div>
+      {/* <BannerSlide /> */}
       <CategoryGrid />
       <FeaturedProducts />
     </>

@@ -45,10 +45,36 @@ const Login = () => {
   return (
     <div className="max-auto w-full max-w-md space-y-6">
       <div className="text-center">
-        <h1 className="text-2xl  font-bold text-foreground">Login</h1>
-        <p className="mt-2 text-sm">don't have an Account</p>
+        {/* Logo placeholder - replace with your actual e-commerce logo */}
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-8 w-8 text-primary"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+            />
+          </svg>
+        </div>
 
-        <Link to="/auth/register">Sign up </Link>
+        <h1 className="text-3xl font-bold text-gray-800">Welcome Back</h1>
+        <p className="mt-2 text-gray-600">Sign in to access your account</p>
+
+        <div className="mt-4 text-sm text-gray-500">
+          Don't have an account?{" "}
+          <Link
+            to="/auth/register"
+            className="font-medium text-primary hover:text-primary/80 transition-colors"
+          >
+            Create one now
+          </Link>
+        </div>
       </div>
 
       <CommonForm

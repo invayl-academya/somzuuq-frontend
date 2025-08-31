@@ -118,27 +118,30 @@ const AdminOrderDetail = () => {
               </h2>
             </div>
             <div className="divide-y">
-              {orderItems.map((item) => (
-                <div key={item._id} className="flex items-center gap-4 py-4">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-16 h-16 rounded-lg object-cover border"
-                  />
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-800 hover:text-indigo-600 transition-colors">
-                      {item.name}
-                    </p>
-                    <p className="text-sm text-gray-500">Qty: {item.qty}</p>
+              {orderItems &&
+                orderItems?.map((item) => (
+                  <div key={item._id} className="flex items-center gap-4 py-4">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-16 h-16 rounded-lg object-cover border"
+                    />
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-800 hover:text-indigo-600 transition-colors">
+                        {item.name}
+                      </p>
+                      <p className="text-sm text-gray-500">Qty: {item.qty}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-medium text-gray-700">
+                        ${(item.qty * item.price).toFixed(2)}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        ${item.price} each
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-medium text-gray-700">
-                      ${(item.qty * item.price).toFixed(2)}
-                    </p>
-                    <p className="text-xs text-gray-400">${item.price} each</p>
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
 

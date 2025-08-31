@@ -1,14 +1,6 @@
-import axios from "axios";
+const ROOT = (import.meta.env.VITE_API_URL || "http://localhost:8000").replace(
+  /\/+$/,
+  ""
+);
 
-// 👉 String base URL (what your slices expect)
-export const APP_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:8000/api";
-
-// 👉 Optional: shared Axios instance if you ever want it
-export const API = axios.create({
-  baseURL: `${APP_URL}/api`,
-  withCredentials: true, // cookies if you use them
-});
-
-// Default export (optional convenience)
-export default API;
+export const APP_URL = `${ROOT}/api`;

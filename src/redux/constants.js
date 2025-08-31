@@ -1,13 +1,14 @@
-// src/constants.js
 import axios from "axios";
 
-// ✅ String value (good for debugging or if you need plain URL)
-export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+// 👉 String base URL (what your slices expect)
+export const APP_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
-// ✅ Axios instance with baseURL
-const APP_URL = axios.create({
-  baseURL: API_URL,
-  withCredentials: true,
+// 👉 Optional: shared Axios instance if you ever want it
+export const API = axios.create({
+  baseURL: APP_URL,
+  withCredentials: true, // cookies if you use them
 });
 
-export default APP_URL;
+// Default export (optional convenience)
+export default API;

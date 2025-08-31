@@ -6,7 +6,7 @@ export const APP_URL =
 
 // 👉 Optional: shared Axios instance if you ever want it
 export const API = axios.create({
-  baseURL: APP_URL,
+  baseURL: `${APP_URL}/api`,
   withCredentials: true, // cookies if you use them
 });
 

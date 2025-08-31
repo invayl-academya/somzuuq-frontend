@@ -1,1 +1,3 @@
-export const APP_URL = "http://localhost:8000/api";
+import client from "@/api/client";
+
+export const APP_URL = client;

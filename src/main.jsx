@@ -7,11 +7,16 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 
+const PAYPAL_CLIENT_ID = import.meta.env.VITE_PAYPAL_CLIENT_ID;
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <Provider store={store}>
-        <PayPalScriptProvider deferLoading={true}>
+        <PayPalScriptProvider
+          deferLoading={true}
+          options={{ "client-id": PAYPAL_CLIENT_ID, currency: "USD" }}
+        >
           <App />
         </PayPalScriptProvider>
       </Provider>

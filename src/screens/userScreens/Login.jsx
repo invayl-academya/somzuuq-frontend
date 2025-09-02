@@ -75,6 +75,12 @@ const Login = () => {
             Create one now
           </Link>
         </div>
+
+        <div className="py-3 ">
+          <p>Test User</p>
+          email : sacda@gmail.com
+          <p>Sacda12345#</p>
+        </div>
       </div>
 
       <CommonForm

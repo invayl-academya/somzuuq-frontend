@@ -30,16 +30,17 @@ const Register = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
+    toast.error("Waanu k xidhany register ka marhaduu course yahay ");
 
-    dispatch(registerUser(formData)).then((data) => {
-      if (data?.payload.success) {
-        toast.success("Register Succesfully");
-        navigate("/auth/login");
-      } else {
-        toast.error(data.payload || "failed to register");
-      }
-      console.log("regD", data);
-    });
+    // dispatch(registerUser(formData)).then((data) => {
+    //   if (data?.payload.success) {
+    //     toast.success("Register Succesfully");
+    //     navigate("/auth/login");
+    //   } else {
+    //     toast.error(data.payload || "failed to register");
+    //   }
+    //   console.log("regD", data);
+    // });
   };
   return (
     <div className="max-auto w-full max-w-md space-y-6">

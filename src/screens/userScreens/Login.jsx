@@ -36,7 +36,7 @@ const Login = () => {
     dispatch(loginUser(formData)).then((result) => {
       if (loginUser.fulfilled.match(result)) {
         toast.success(result.payload.message || "Login Succesfully");
-        navigate("/shop/home");
+        navigate("/shop/products");
       } else {
         toast.error(result.payload || "failed Login");
       }

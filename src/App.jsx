@@ -29,10 +29,10 @@ import AdminOrderDetail from "./screens/adminScreens/AdminOrderDetail";
 import DeliveredOrderScreen from "./screens/adminScreens/DeliveredOrderScreen";
 
 function App() {
-  // const dispatch = useDispatch();
-  // useEffect(() => {
-  //   dispatch(fetchUserProfile()); // ✅ fetch on initial load
-  // }, [dispatch]);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchUserProfile()); // ✅ fetch on initial load
+  }, [dispatch]);
 
   return (
     <div>
